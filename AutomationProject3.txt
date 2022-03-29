@@ -1,0 +1,252 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+
+public class AutoProj {
+
+    public static void main(String[] args) throws InterruptedException, ElementClickInterceptedException {
+
+
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\taylo\\" +
+                "Desktop\\Browser Drivers\\chromedriver_win32\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+
+//        if ("reCAPTCHA") { //an attempt to bypass interruption, still in progress.
+
+
+            System.out.println("1 =========================================");
+
+            driver.get("https://www.carfax.com/");
+
+            System.out.println("2 =========================================");
+
+            driver.findElement(By.xpath("//a[@class='button button--green outline']")).click();
+
+
+            System.out.println("3 =========================================");
+
+            Assert.assertTrue(driver.getTitle().contains("Used Cars"));
+            System.out.print(driver.findElement(By.xpath("//li[@class='breadcrumb-currentlinks']")).getText());
+            System.out.println(" is present");
+
+
+            System.out.println("4 =========================================");
+
+            WebElement path = driver.findElement(By.xpath("//select[@class='form-control search-make search-make--lp']"));
+            path.click();
+            Thread.sleep(3000);
+            WebElement path2 = driver.findElement(By.id("make_Tesla"));
+            path2.click();
+            Thread.sleep(3000);
+
+            driver.findElements(By.xpath("//div[@class='captcha__human__title']"));
+
+            System.out.println("5 =========================================");
+
+            driver.findElement(By.xpath("//select[@class='form-control search-model  search-model--lp']"));
+
+            WebElement model3 = driver.findElement(By.id("model_Model-3"));
+            WebElement modelS = driver.findElement(By.id("model_Model-S"));
+            WebElement modelX = driver.findElement(By.id("model_Model-X"));
+            WebElement modelY = driver.findElement(By.id("model_Model-Y"));
+            Assert.assertEquals(model3.getAttribute("value"), "Model 3");
+            Assert.assertEquals(modelS.getAttribute("value"), "Model S");
+            Assert.assertEquals(modelX.getAttribute("value"), "Model X");
+            Assert.assertEquals(modelY.getAttribute("value"), "Model Y");
+
+            System.out.println("6 =========================================");
+
+            driver.findElement(By.xpath("//option[@value='Model S']")).click();
+            Thread.sleep(2000);
+
+            System.out.println("7 =========================================");
+
+            driver.findElement((By.xpath("//input[@name='zip']"))).sendKeys("22182");
+            driver.findElement(By.xpath("//button[@id='make-model-form-submit-button']")).click();
+            Thread.sleep(2000);
+
+            System.out.println("8 =========================================");
+
+            String expectedText = "Step 2 - Show me cars with";
+            WebElement actualText = driver.findElement(By.xpath("//h3[@class='searchForm-wrapper-header--lp']"));
+
+            Assert.assertTrue(actualText.getText().contains(expectedText));
+
+            System.out.println("9 =========================================");
+
+            List<WebElement> checks = driver.findElements(By.xpath("//span[@role='checkbox']"));
+            for (WebElement check : checks) {
+                if (!check.isSelected()) {
+                    check.click();
+                    Thread.sleep(2000);
+                }
+            }
+
+            System.out.println("10 =========================================");
+
+            WebElement results = driver.findElement(By.xpath("//span[@class='totalRecordsText']"));
+            //String variable created for easy comparison later
+            String resultResult = results.getText();
+
+            System.out.println("The number of results are " + resultResult);
+
+            System.out.println("11 =========================================");
+
+            driver.findElement(By.xpath("//button[@class='button large primary-green show-me-search-submit']")).click();
+            Thread.sleep(1000);
+
+            System.out.println("12 =========================================");
+
+            int countTotal = 0;
+            List<WebElement> carList = driver.findElements(By.xpath("//div[@class='srp-list-container srp-list-container--srp']//article[contains(@id, 'listing')]"));
+            countTotal = carList.size();
+            //String variable created for easy comparison directly below
+            String countCount = countTotal + "";
+
+            if (countCount.equals(resultResult)) {
+                System.out.println("PASSED");
+                System.out.println("The actual count equals the number of elements displayed on the UI");
+            } else {
+                System.out.println("FAILED");
+                System.out.println("The actual count DOES NOT equal the number of elements displayed on the UI");
+
+            }
+
+            System.out.println("13 =========================================");
+
+            List<WebElement> currentModel = driver.findElements(By.xpath("//h4[contains(text(), 'Model S')]"));
+            String ele = "";
+            for (WebElement element : currentModel) {
+                ele = element.getText();
+                //  System.out.println(ele);   //CONFIRMATION EACH ELEMENT CONTAINS MODEL S
+                Assert.assertTrue(ele.contains("Model S"));
+            }
+
+            System.out.println("14 =========================================");
+
+            List<WebElement> carPrice = driver.findElements(By.xpath("//span[@class='srp-list-item-price']"));
+            String price = String.valueOf("");
+            for (WebElement webElement : carPrice) {
+                price += webElement.getText().substring(7).toString() + " - ";
+            }
+        System.out.println();
+            System.out.print(price);
+        System.out.println();
+
+
+            System.out.println("15 =========================================");
+
+            driver.findElement(By.xpath("//select[contains(@class, 'sort-select')]")).click();
+            WebElement highToLow = driver.findElement(By.xpath("//option[@id='priceDesc']"));
+            highToLow.click();
+            Thread.sleep(1000);
+
+            System.out.println("16 =========================================");
+
+            List<WebElement> HiLowPrice = driver.findElements(By.xpath("//span[contains(@class, 'srp-list-item-price')]"));
+            List<String> HiLowList = new ArrayList<>();
+            List<String> HiLowList2 = new ArrayList<>();
+            for (WebElement element : HiLowPrice) {
+                HiLowList.add(element.getText().substring(7));
+                HiLowList2.add(element.getText().substring(7));
+            }
+            System.out.println();
+        System.out.println("The list according to \"Price - High to Low\": ");
+        System.out.println(HiLowList);
+            System.out.println();
+
+        Collections.sort(HiLowList2, Collections.reverseOrder());
+
+        String lastE = HiLowList2.get(HiLowList2.size()-1);
+        String nextToLastE = HiLowList2.get(HiLowList2.size()-2);
+        HiLowList2.add(0,lastE);
+        HiLowList2.add(0,nextToLastE);
+        HiLowList2.remove(HiLowList2.size()-1);
+        HiLowList2.remove(HiLowList2.size()-1);
+
+        System.out.println("Actual descending order list: ");
+        System.out.println(HiLowList2);
+        System.out.println();
+
+        if(HiLowList.equals(HiLowList2)){
+            System.out.println("PASSED");
+        }else{
+            System.out.println("FAILED");
+            System.out.println("Although the UI displays from Highest to Lowest, the list itself is the original \"CARFAX Best Match\" ");
+        }
+        System.out.println();
+
+            System.out.println("17 =========================================");
+
+            driver.findElement(By.xpath("//select[contains(@class, 'sort-select')]")).click();
+            WebElement mileage = driver.findElement(By.xpath("//option[@id='mileageAsc']"));
+            Thread.sleep(2000);
+            mileage.click();
+
+            System.out.println("18 =========================================");
+
+            List<WebElement> odom = driver.findElements(By.xpath("(//span[@class='srp-list-item-basic-info-value']) "));
+            List<String> odomList = new ArrayList<>();
+            String od = String.valueOf("");
+            for (WebElement element : odom) {
+                odomList.add(element.getText());
+                od += element.getText().substring(9) + " \n";
+            }
+        System.out.println(odomList);
+        System.out.println();
+            System.out.println(od);
+
+            System.out.println("19 =========================================");
+
+            driver.findElement(By.xpath("//select[contains(@class, 'sort-select')]")).click();
+            WebElement year = driver.findElement(By.xpath("//option[@id='yearDesc']"));
+            Thread.sleep(5000);
+            year.click();
+
+            System.out.println("20 =========================================");
+
+            List<WebElement> modelYear = driver.findElements(By.xpath("//h4[@class='srp-list-item-basic-info-model']"));
+            List<String> yearList = new ArrayList<>();
+            List<String> yearList2 = new ArrayList<>();
+
+            for (WebElement element : modelYear) {
+                yearList.add(element.getText().substring(0, 5));
+                yearList2.add(element.getText().substring(0, 5));
+            }
+            System.out.println();
+        System.out.println("The list according to \"Year - New to Old\": ");
+        System.out.println(yearList);
+            System.out.println();
+
+        Collections.sort(yearList2, Collections.reverseOrder());
+
+        String lastEle = yearList2.get(yearList2.size()-1);
+        String nextToLastEle = yearList2.get(yearList2.size()-2);
+
+        System.out.println("Actual descending order list: ");
+        System.out.println(yearList2);
+        System.out.println();
+
+        if(yearList.equals(yearList2)){
+            System.out.println("PASSED");
+        }else{
+            System.out.println("FAILED");
+            System.out.println("Although the UI displays from Newest to Oldest, the list itself is the original \"CARFAX Best Match\" ");
+        }
+        System.out.println();
+
+          driver.quit();
+            Thread.sleep(2000);
+
+
+    //    }
+    }
+}
